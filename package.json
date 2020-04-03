@@ -1,5 +1,5 @@
 {
-  "name": "kcs-kvs-sdk",
+  "name": "ksc-kvs-sdk",
   "version": "1.0.3",
   "description": "金山云点播转码 SDK",
   "main": "index.js",
