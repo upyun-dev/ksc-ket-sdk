@@ -34,12 +34,25 @@ class Client {
    * @param {Undefined|Object} userParams 金山云接口所需的参数，这里面可以不传 Action 和 Version
    * @param {Undefined|Object} [options.headers] http headers
    * @param {Undefined|Booolean} [options.raw] 是否返回原生信息
+   * @param {Undefined|Array} [options.timeout] timeout 超时时间
    */
   async request(action, userParams, options = {}) {
+    assert(!userParams || _.isPlainObject(userParams), 'userParams must be json type or undefined'); // eslint-disable-line max-len
+    options = _.defaultsDeep(options, {
+      method: 'GET',
+      host: this.host,
+      path: '/',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        Accept: 'application/json',
+      },
+      body: '',
+      service: this.service,
+      timeout: [3000, 60000], // 连接超时 3s，响应超时 60s
+    });
+
     const raw = options.raw;
-    options = _.assign(options, this._getApi(action));
     options = this._handleRequest(action, userParams, options);
-    options.timeout = [3000, 60000]; // 连接超时 3s，响应超时 60s
 
     // eslint-disable-next-line no-unused-vars
     let res = await urllib.request(options.url, options).catch(unusedError => {
@@ -72,22 +85,12 @@ class Client {
    * @param {String} [options.method] http method, 默认是 GET
    * @param {String} [options.path] 金山云接口请求地址, 默认是 /
    * @param {Undefined|Object} [options.headers] http headers
+   * @param {Undefined|Array} [options.timeout] timeout 超时时间
    * @return {Object}
    */
   _handleRequest(action, userParams, options = {}) {
-    assert(!userParams || _.isPlainObject(userParams), 'userParams must be json type or undefined'); // eslint-disable-line max-len
-    options = _.defaultsDeep(options, {
-      method: 'GET',
-      host: this.host,
-      path: '/',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        Accept: 'application/json',
-      },
-      body: '',
-      service: this.service,
-    });
-
+    options = _.assign(options, this._getApi(action));
+    const timeout = options.timeout;
     const url = require('url').parse(this.endpoint + options.path);
     let query = qs.parse(url.query);
     query.Action = action;
@@ -108,9 +111,11 @@ class Client {
       accessKeyId: this.accessKeyId,
     });
 
+    // 兼容 urilib
     options.url = this.endpoint + options.path;
     options.content = options.body;
     options.dataType = 'json';
+    options.timeout = timeout;
 
     return options;
   }
