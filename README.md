@@ -10,7 +10,7 @@ const client = new Client({
     apiVersion: '2017-01-01',
 });
 
-client.request('<金山云接口名称>', userParams: {
+client.request('<金山云接口名称>', {
         // 金山与接口所需参数, 其中 Action 与 Version 可以忽略
     },
     options: {
