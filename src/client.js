@@ -55,7 +55,7 @@ class Client {
     });
 
     const raw = options.raw;
-    options = this._handleRequest(action, userParams, options);
+    options = this._request(action, userParams, options);
 
     // eslint-disable-next-line no-unused-vars
     let res = await urllib.request(options.url, options).catch(unusedError => {
@@ -91,8 +91,8 @@ class Client {
    * @param {Undefined|Array} [options.timeout] timeout 超时时间
    * @return {Object}
    */
-  _handleRequest(action, userParams, options = {}) {
-    options = _.assign(options, this._getApi(action));
+  _request(action, userParams, options = {}) {
+    options = _.assign(options, this._api(action));
     const timeout = options.timeout;
     const url = require('url').parse(this.endpoint + options.path);
     let query = qs.parse(url.query);
@@ -128,7 +128,7 @@ class Client {
    * @param {String} action 操作接口名
    * @return {Object} {method: <String>, path: <String>}
    */
-  _getApi(action) {
+  _api(action) {
     switch (action) {
       case 'Preset':
       case 'UpdatePreset':
