@@ -37,8 +37,8 @@ class Client {
    * @param {Undefined|Array} [options.timeout] timeout 超时时间
    */
   async request(action, userParams, options = {}) {
-    assert(!userParams || _.isPlainObject(userParams), 'userParams must be json type or undefined'); // eslint-disable-line max-len
-    options = _.defaultsDeep(options, {
+    assert(!userParams || _.isPlainObject(userParams), 'userParams must be json type or undefined');
+    _.defaultsDeep(options, {
       method: 'GET',
       host: this.host,
       path: '/',
@@ -48,6 +48,9 @@ class Client {
       },
       body: '',
       service: this.service,
+    });
+
+    _.assign(options, {
       timeout: [3000, 60000], // 连接超时 3s，响应超时 60s
     });
 
