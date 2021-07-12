@@ -15,7 +15,7 @@ class Client {
     assert(config.secretAccessKey, 'must pass "config.secretAccessKey"');
 
     config = _.defaultsDeep(config, {
-      host: 'kvs.cn-beijing-6.api.ksyun.com',
+      host: 'kvs.cn-beijing-6.api.ksyuncs.com',
     });
 
     this.Version = config.apiVersion;
